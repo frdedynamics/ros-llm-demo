@@ -64,8 +64,14 @@ colcon build --symlink-install
 echo 'source ~/turtlebot3_ws/install/setup.bash' >> ~/.bashrc
 echo 'export ROS_DOMAIN_ID=30 #TURTLEBOT3' >> ~/.bashrc
 echo 'source /usr/share/gazebo/setup.sh' >> ~/.bashrc
+
+cd ~/turtlebot3_ws/src/
+git clone -b humble https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git
+cd ~/turtlebot3_ws && colcon build --symlink-install
+
+echo 'export TURTLEBOT3_MODEL=waffle_pi' >> ~/.bashrc
 ```
-Note: got an error on dynamixel during build, don't care at this point though.
+Note: got an error on dynamixel and gazebo during build, don't care at this point though.
 
 ### Verify `.bashrc`
 
@@ -75,5 +81,45 @@ source /opt/ros/humble/setup.bash
 source ~/turtlebot3_ws/install/setup.bash
 export ROS_DOMAIN_ID=30 #TURTLEBOT3
 source /usr/share/gazebo/setup.sh
+export TURTLEBOT3_MODEL=waffle_pi
 ```
 verify using `gedit ~/.bashrc` and scroll to bottom.
+
+## Test Turtlebot 3 simulation
+Use https://emanual.robotis.com/docs/en/platform/turtlebot3/nav_simulation/
+
+### Make a map
+
+Terminal 1
+```bash
+ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
+```
+
+Terminal 2
+```bash
+ros2 launch turtlebot3_cartographer cartographer.launch.py use_sim_time:=True
+```
+
+Terminal 3
+```bash
+ros2 run turtlebot3_teleop teleop_keyboard
+```
+
+used terminal 3 to drive the turtlebot around to make a map. Then
+
+Terminal 4
+```bash
+ros2 run nav2_map_server map_saver_cli -f ~/map
+```
+
+## Demo
+
+Terminal 1
+```bash
+ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
+```
+
+Terminal 2
+```bash
+ros2 launch turtlebot3_navigation2 navigation2.launch.py use_sim_time:=True map:=$HOME/map.yaml
+```
