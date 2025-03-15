@@ -41,3 +41,39 @@ sudo apt install ros-dev-tools
 
 echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 ```
+
+### Turtlebot 3 install steps
+History of commands for install of Turtlebot 3 in VM. Resulting steps from https://emanual.robotis.com/docs/en/platform/turtlebot3/quick-start/
+
+```bash
+sudo apt install ros-humble-gazebo-*
+sudo apt install ros-humble-cartographer
+sudo apt install ros-humble-cartographer-ros
+sudo apt install ros-humble-navigation2
+sudo apt install ros-humble-nav2-bringup
+
+mkdir -p ~/turtlebot3_ws/src
+cd ~/turtlebot3_ws/src/
+git clone -b humble https://github.com/ROBOTIS-GIT/DynamixelSDK.git
+git clone -b humble https://github.com/ROBOTIS-GIT/turtlebot3_msgs.git
+git clone -b humble https://github.com/ROBOTIS-GIT/turtlebot3.git
+sudo apt install python3-colcon-common-extensions
+cd ~/turtlebot3_ws
+colcon build --symlink-install
+
+echo 'source ~/turtlebot3_ws/install/setup.bash' >> ~/.bashrc
+echo 'export ROS_DOMAIN_ID=30 #TURTLEBOT3' >> ~/.bashrc
+echo 'source /usr/share/gazebo/setup.sh' >> ~/.bashrc
+```
+Note: got an error on dynamixel during build, don't care at this point though.
+
+### Verify `.bashrc`
+
+After install, the following 4 lines should be at then end of `.bashrc`
+```bash
+source /opt/ros/humble/setup.bash
+source ~/turtlebot3_ws/install/setup.bash
+export ROS_DOMAIN_ID=30 #TURTLEBOT3
+source /usr/share/gazebo/setup.sh
+```
+verify using `gedit ~/.bashrc` and scroll to bottom.
